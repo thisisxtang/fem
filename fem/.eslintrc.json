@@ -4,7 +4,7 @@
     "plugin:import/errors",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
-    "prettier", //按顺序执行指令，所欲按优先级排列，prettier必须要最后
+    "prettier",
     "prettier/react"
   ],
 
