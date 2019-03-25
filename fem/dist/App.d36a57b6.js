@@ -30299,17 +30299,35 @@ function (_Component) {
   _inherits(SearchBox, _Component);
 
   function SearchBox() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    var _temp;
+
     _classCallCheck(this, SearchBox);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(SearchBox).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(SearchBox)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.handleFormSubmit = function (event) {
+      event.preventDefault();
+
+      _this.props.search();
+    }, _temp));
   }
 
   _createClass(SearchBox, [{
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       return _react.default.createElement(_SearchContext.Consumer, null, function (context) {
         return _react.default.createElement("div", {
           className: "search-params"
+        }, _react.default.createElement("form", {
+          onSubmit: _this2.handleFormSubmit
         }, _react.default.createElement("label", {
           htmlFor: "location"
         }, "Location", _react.default.createElement("input", {
@@ -30342,7 +30360,7 @@ function (_Component) {
             key: breed,
             value: breed
           }, breed);
-        }))), _react.default.createElement("button", null, "Submit"));
+        }))), _react.default.createElement("button", null, "Submit")));
       });
     }
   }]);
@@ -30358,15 +30376,19 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.default = ResultsWithContext;
 
 var _react = _interopRequireDefault(require("react"));
 
 var _petfinderClient = _interopRequireDefault(require("petfinder-client"));
 
+var _SearchContext = require("./SearchContext");
+
 var _Pet = _interopRequireDefault(require("./Pet"));
 
 var _SearchBox = _interopRequireDefault(require("./SearchBox"));
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30404,20 +30426,13 @@ function (_React$Component) {
     _classCallCheck(this, Results);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Results).call(this, props));
-    _this.state = {
-      pets: []
-    };
-    return _this;
-  }
 
-  _createClass(Results, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var _this2 = this;
-
+    _this.search = function () {
       petfinder.pet.find({
         output: "full",
-        location: "New York, NY"
+        location: _this.props.searchParams.location,
+        animal: _this.props.searchParams.animal,
+        breed: _this.props.searchParams.breed
       }).then(function (data) {
         var pets;
 
@@ -30431,17 +30446,31 @@ function (_React$Component) {
           pets = [];
         }
 
-        _this2.setState({
+        _this.setState({
           pets: pets
         });
       });
+    };
+
+    _this.state = {
+      pets: []
+    };
+    return _this;
+  }
+
+  _createClass(Results, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.search();
     }
   }, {
     key: "render",
     value: function render() {
       return _react.default.createElement("div", {
         className: "search"
-      }, _react.default.createElement(_SearchBox.default, null), this.state.pets.map(function (pet) {
+      }, _react.default.createElement(_SearchBox.default, {
+        search: this.search
+      }), this.state.pets.map(function (pet) {
         var breed;
 
         if (Array.isArray(pet.breeds.breed)) {
@@ -30466,9 +30495,14 @@ function (_React$Component) {
   return Results;
 }(_react.default.Component);
 
-var _default = Results;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","petfinder-client":"../node_modules/petfinder-client/index.js","./Pet":"Pet.js","./SearchBox":"SearchBox.js"}],"../node_modules/@reach/router/lib/history.js":[function(require,module,exports) {
+function ResultsWithContext(props) {
+  return _react.default.createElement(_SearchContext.Consumer, null, function (context) {
+    return _react.default.createElement(Results, _extends({}, props, {
+      searchParams: context
+    }));
+  });
+}
+},{"react":"../node_modules/react/index.js","petfinder-client":"../node_modules/petfinder-client/index.js","./SearchContext":"SearchContext.js","./Pet":"Pet.js","./SearchBox":"SearchBox.js"}],"../node_modules/@reach/router/lib/history.js":[function(require,module,exports) {
 "use strict";
 
 exports.__esModule = true;
@@ -30857,6 +30891,8 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _SearchBox = _interopRequireDefault(require("./SearchBox"));
 
+var _history = require("@reach/router/lib/history");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -30891,11 +30927,18 @@ function (_Component) {
   }
 
   _createClass(SearchParams, [{
+    key: "handleSearchSubmit",
+    value: function handleSearchSubmit() {
+      (0, _history.navigate)("/");
+    }
+  }, {
     key: "render",
     value: function render() {
       return _react.default.createElement("div", {
         className: "search-route"
-      }, _react.default.createElement(_SearchBox.default, null));
+      }, _react.default.createElement(_SearchBox.default, {
+        search: this.handleSearchSubmit
+      }));
     }
   }]);
 
@@ -30904,7 +30947,7 @@ function (_Component) {
 
 var _default = SearchParams;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./SearchBox":"SearchBox.js"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./SearchBox":"SearchBox.js","@reach/router/lib/history":"../node_modules/@reach/router/lib/history.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -31022,7 +31065,12 @@ function (_React$Component) {
     value: function render() {
       return _react.default.createElement("div", null, _react.default.createElement("header", null, _react.default.createElement(_router.Link, {
         to: "/"
-      }, "Adopt Me!")), _react.default.createElement(_SearchContext.Provider, {
+      }, "Adopt Me!"), _react.default.createElement(_router.Link, {
+        to: "/search-params"
+      }, _react.default.createElement("span", {
+        "aria-label": "search",
+        role: "img"
+      }, "\uD83D\uDD2C"))), _react.default.createElement(_SearchContext.Provider, {
         value: this.state
       }, _react.default.createElement(_router.Router, null, _react.default.createElement(_Results.default, {
         path: "/"
@@ -31066,7 +31114,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65435" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58853" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -12,6 +12,7 @@ class Pet extends React.Component {
     }
 
     let hero = "http://placecorgi.com/300/300";
+
     if (photos[0] && photos[0].value) {
       hero = photos[0].value;
     }
