@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest --silent",
+    "test:update": "jest --silent -u",
+    "test:watch": "jest --silent --watch",
+    "test:coverage": "jest --silent --coverage",
     "format": "prettier --write \"src/**／*.{js, jsx, css, jason}\" ",
     "format:check": "prettier --list-different \"src/**/*.{js, jsx, css, jason}\"",
     "lint": "eslint \"src/**/*.{js,jsx}\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel src/index.html"
   },
   "keywords": [],
@@ -25,12 +28,14 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
-    "parcel-bundler": "^1.12.1",
-    "prettier": "^1.16.4"
+    "jest": "^23.6.0",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.16.4",
+    "react-test-renderer": "^16.8.6"
   },
   "dependencies": {
     "@reach/router": "^1.2.1",
-    "petfinder-client": "^2.0.1",
+    "petfinder-client": "^1.0.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
   }
